@@ -4,15 +4,15 @@ import { ChildProcessService } from 'ngx-childprocess';
 @Component({
   selector: 'st-main-view',
   templateUrl: './main-view.component.html',
-  styleUrls: ['./main-view.component.css']
+  styleUrls: ['./main-view.component.css'],
 })
 export class MainViewComponent implements OnInit {
   constructor(private _childProcessService: ChildProcessService) {}
 
   ngOnInit() {}
 
-  shudown(miliseconds = 0) {
-    this.execCmd(['/s', '/t', miliseconds]);
+  shudown(timer = 0 /* milliseconds */) {
+    this.execCmd(['/s', '/t', timer]);
   }
 
   abort() {
