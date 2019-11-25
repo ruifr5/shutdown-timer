@@ -10,6 +10,6 @@ import { MainViewComponent } from './main-view/main-view.component';
   declarations: [AppComponent, MainViewComponent],
   imports: [BrowserModule, NgxChildProcessModule, NgbModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

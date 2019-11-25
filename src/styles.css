@@ -1,2 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~bootstrap/dist/css/bootstrap.min.css';
+@font-face {
+  font-family: digital;
+  src: url(assets/digital.otf) format('opentype');
+}
+@font-face {
+  font-family: digital-fancy;
+  src: url(assets/digital-fancy.ttf) format('opentype');
+}
+
+body {
+  margin: 0;
+  background-color: #434241;
+}

@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css'],
   template: `
     <st-main-view></st-main-view>
-  `
+  `,
 })
 export class AppComponent {
   title = 'shutdown-timer';

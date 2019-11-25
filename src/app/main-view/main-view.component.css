@@ -1,0 +1,150 @@
+.base {
+  width: 583px;
+  height: 268px;
+  border: solid 30px #434241;
+  background-color: #0c0c0c;
+  padding: 17px;
+  font-family: monospace;
+  /* -webkit-app-region: drag; */
+}
+
+.titulo {
+  font-size: 26px;
+}
+
+.sub-titulo {
+  font-size: 20px;
+  font-style: italic;
+}
+
+.titulos-container {
+  color: #8a8585;
+  margin-bottom: 10px;
+}
+
+.preset-botao {
+  width: 100%;
+  height: 35px;
+  background-color: #808080;
+  border: none;
+}
+
+.preset-botao:focus {
+  outline: none;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.preset-btn-group {
+  color: #fffefe;
+  font-style: italic;
+  width: 100px;
+  height: 110px;
+  background-color: #131312;
+  border: 4.6px dashed #000000;
+  padding: 10px;
+}
+
+.preset-btn-group .title {
+  margin-bottom: 6px;
+}
+
+.preset-botao + .preset-botao {
+  margin-top: 8px;
+}
+
+.action-botao {
+  margin-left: 2px;
+  margin-top: 15px;
+  width: 87px;
+  height: 35px;
+  border: none;
+  font-size: 15px;
+  color: #000000;
+  font-weight: 900;
+}
+
+.preset-botao:active,
+.action-botao:active,
+.maisemenos:active {
+  background-color: darkgray;
+}
+
+.apply {
+  background-color: #566984;
+  margin-left: 15px;
+}
+
+.abort {
+  background-color: #a00d0d;
+}
+
+.centro {
+  display: flex;
+}
+
+.baixo {
+  display: flex;
+}
+
+.maisemenos-container {
+  width: 169px;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+  margin-right: 15px;
+}
+
+.maisemenos {
+  width: 25px;
+  height: 25px;
+  border-radius: 22px;
+  background: #808080;
+  font-size: 30px;
+  text-align: center;
+  cursor: default;
+  user-select: none;
+}
+
+.maisemenos + .maisemenos {
+  margin-left: 8px;
+  margin-right: 40px;
+}
+
+.maisemenos span {
+  position: relative;
+  top: -7px;
+}
+
+.preta {
+  width: 338px;
+  height: 140px;
+  margin-left: 60px;
+  background-color: #000000;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.horas {
+  font-family: digital;
+  font-size: 132px;
+  width: 100%;
+  text-align: center;
+}
+
+.horas-vermelho {
+  color: red;
+  z-index: 100;
+}
+
+.horas-cinzento {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  color: #110f0f;
+}

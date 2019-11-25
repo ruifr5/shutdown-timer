@@ -1,17 +1,23 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu } = require('electron');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+Menu.setApplicationMenu(false);
 
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 100,
-    height: 800,
+    width: 677,
+    height: 362,
     webPreferences: {
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+    },
+    resizable: false,
+    backgroundColor: '#434241',
+    thickFrame: false,
+    title: 'ShutdownTimer',
+    useContentSize: true,
   });
 
   // and load the index.html of the app.
