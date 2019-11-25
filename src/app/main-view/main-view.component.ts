@@ -39,7 +39,14 @@ export class MainViewComponent implements OnInit {
     return date;
   }
 
-  shudown(timer = 0 /* seconds */) {
+  shutdownFromSelected() {
+    this.shutdown(this.hours * 60 * 60 + this.minutes * 60);
+  }
+
+  shutdown(timer: number /* seconds */) {
+    if (!timer) {
+      return;
+    }
     this.execCmd(['/s', '/t', timer]);
   }
 

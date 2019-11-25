@@ -7,6 +7,4 @@ import { Component } from '@angular/core';
     <st-main-view></st-main-view>
   `,
 })
-export class AppComponent {
-  title = 'shutdown-timer';
-}
+export class AppComponent {}

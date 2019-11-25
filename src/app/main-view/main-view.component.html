@@ -10,10 +10,10 @@
   <div class="centro">
     <div class="preset-btn-group">
       <div class="title">PreSets</div>
-      <button class="preset-botao" (click)="shudown(60 * 60 * 2)">
+      <button class="preset-botao" (click)="shutdown(60 * 60 * 2)">
         2H
       </button>
-      <button class="preset-botao" (click)="shudown(60 * 60 * 3)">
+      <button class="preset-botao" (click)="shutdown(60 * 60 * 3)">
         3H
       </button>
     </div>
@@ -29,7 +29,9 @@
   <div class="baixo">
     <div class="actions-container">
       <button class="action-botao abort" (click)="abort()">Abort</button>
-      <button class="action-botao apply">Set</button>
+      <button class="action-botao apply" (click)="shutdownFromSelected()">
+        Set
+      </button>
     </div>
     <div class="maisemenos-container">
       <div class="maisemenos" (click)="decHours()"><span>-</span></div>

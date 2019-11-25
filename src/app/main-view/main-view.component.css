@@ -27,6 +27,7 @@
   height: 35px;
   background-color: #808080;
   border: none;
+  font-weight: 600;
 }
 
 .preset-botao:focus {
@@ -106,6 +107,7 @@
   text-align: center;
   cursor: default;
   user-select: none;
+  font-weight: 600;
 }
 
 .maisemenos + .maisemenos {
@@ -115,7 +117,7 @@
 
 .maisemenos span {
   position: relative;
-  top: -7px;
+  top: -3px;
 }
 
 .preta {
