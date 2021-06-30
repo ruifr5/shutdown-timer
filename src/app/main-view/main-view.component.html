@@ -1,26 +1,16 @@
 <div class="base">
   <div class="titulos-container">
-    <div class="titulo">
-      ShutDown Timer II
-    </div>
-    <div class="sub-titulo">
-      SHUT UP!
-    </div>
+    <div class="titulo">ShutDown Timer II</div>
+    <div class="sub-titulo">SHUT UP!</div>
   </div>
   <div class="centro">
     <div class="preset-btn-group">
       <div class="title">PreSets</div>
-      <button class="preset-botao" (click)="shutdown(60 * 60 * 2)">
-        2H
-      </button>
-      <button class="preset-botao" (click)="shutdown(60 * 60 * 3)">
-        3H
-      </button>
+      <button class="preset-botao" (click)="shutdown(60 * 60 * 2)">2H</button>
+      <button class="preset-botao" (click)="shutdown(60 * 60 * 3)">3H</button>
     </div>
     <div class="preta">
-      <span class="horas horas-cinzento">
-        00:00
-      </span>
+      <span class="horas horas-cinzento"> 00:00 </span>
       <span class="horas horas-vermelho">
         {{ hours | number: '2.0-0' }}:{{ minutes | number: '2.0-0' }}
       </span>
