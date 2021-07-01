@@ -4,32 +4,43 @@
     <div class="sub-titulo">SHUT UP!</div>
   </div>
   <div class="centro">
-    <div class="preset-btn-group">
-      <div class="title">PreSets</div>
-      <button class="preset-botao" (click)="shutdown(60 * 60 * 2)">2H</button>
-      <button class="preset-botao" (click)="shutdown(60 * 60 * 3)">3H</button>
+    <div class="preset-btn-group" [ngClass]="{ disabled: disableControls }">
+      <ng-container *ngIf="!disableControls">
+        <div class="preset-title">PreSets</div>
+        <button class="preset-botao" (click)="shutdown(60 * 60 * 2)">2H</button>
+        <button class="preset-botao" (click)="shutdown(60 * 60 * 3)">3H</button>
+      </ng-container>
     </div>
     <div class="preta">
       <span class="horas horas-cinzento"> 00:00 </span>
       <span class="horas horas-vermelho">
         {{ hours | number: '2.0-0' }}:{{ minutes | number: '2.0-0' }}
       </span>
+      <div class="segundos">
+        {{ seconds | number: '2.0-0' }}
+      </div>
     </div>
   </div>
   <div class="baixo">
     <div class="actions-container">
       <button class="action-botao abort" (click)="abort()">Abort</button>
-      <button class="action-botao apply" (click)="shutdownFromSelected()">
+      <button
+        *ngIf="!disableControls"
+        class="action-botao apply"
+        (click)="shutdownFromSelected()"
+      >
         Set
       </button>
     </div>
-    <div class="maisemenos-container">
-      <div class="maisemenos" (click)="decHours()"><span>-</span></div>
-      <div class="maisemenos" (click)="incHours()"><span>+</span></div>
-    </div>
-    <div class="maisemenos-container">
-      <div class="maisemenos" (click)="decMinutes()"><span>-</span></div>
-      <div class="maisemenos" (click)="incMinutes()"><span>+</span></div>
-    </div>
+    <ng-container *ngIf="!disableControls">
+      <div class="maisemenos-container">
+        <div class="maisemenos" (click)="decHours()"><span>-</span></div>
+        <div class="maisemenos" (click)="incHours()"><span>+</span></div>
+      </div>
+      <div class="maisemenos-container">
+        <div class="maisemenos" (click)="decMinutes()"><span>-</span></div>
+        <div class="maisemenos" (click)="incMinutes()"><span>+</span></div>
+      </div>
+    </ng-container>
   </div>
 </div>

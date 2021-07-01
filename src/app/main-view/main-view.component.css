@@ -5,7 +5,6 @@
   background-color: #0c0c0c;
   padding: 17px;
   font-family: monospace;
-  /* -webkit-app-region: drag; */
 }
 
 .titulo {
@@ -20,6 +19,8 @@
 .titulos-container {
   color: #8a8585;
   margin-bottom: 10px;
+  pointer-events: none;
+  user-select: none;
 }
 
 .preset-botao {
@@ -48,8 +49,15 @@
   padding: 10px;
 }
 
-.preset-btn-group .title {
+.preset-btn-group.disabled {
+  border: 4.6px dashed #0c0c0c;
+  background-color: #0c0c0c;
+}
+
+.preset-btn-group .preset-title {
   margin-bottom: 6px;
+  pointer-events: none;
+  user-select: none;
 }
 
 .preset-botao + .preset-botao {
@@ -65,6 +73,10 @@
   font-size: 15px;
   color: #000000;
   font-weight: 900;
+}
+
+button {
+  user-select: none;
 }
 
 .preset-botao:active,
@@ -149,4 +161,14 @@
   left: 0px;
   top: 0px;
   color: #110f0f;
+}
+
+.segundos {
+  font-family: digital;
+  color: #434241;
+  position: absolute;
+  text-align: bottom;
+  font-size: 28px;
+  right: 3px;
+  bottom: 15px;
 }
