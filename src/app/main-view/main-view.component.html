@@ -23,11 +23,18 @@
   </div>
   <div class="baixo">
     <div class="actions-container">
-      <button class="action-botao abort" (click)="abort()">Abort</button>
       <button
+        #abortBtn
+        class="action-botao abort"
+        (click)="abort(); abortBtn.blur()"
+      >
+        Abort
+      </button>
+      <button
+        #setBtn
         *ngIf="!disableControls"
         class="action-botao apply"
-        (click)="shutdownFromSelected()"
+        (click)="shutdownFromSelected(); setBtn.blur()"
       >
         Set
       </button>
