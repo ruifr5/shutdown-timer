@@ -1,7 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ChildProcessService } from 'ngx-childprocess';
-import { Subscription, timer } from 'rxjs';
-import { scan, take } from 'rxjs/operators';
+import { Subscription, timer, BehaviorSubject } from 'rxjs';
+import { debounceTime, scan, take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'st-main-view',
@@ -14,12 +14,18 @@ export class MainViewComponent implements OnInit, OnDestroy {
   seconds = 0;
   disableControls = false;
 
+  private correctTimerValues$: BehaviorSubject<any>;
+  private correctTimerValuesSubscription: Subscription;
   private countdownSubscription: Subscription;
   private savedTimer = 0;
+  private readonly MAX_MINUTES = 59;
+  private readonly MAX_HOURS = 99;
 
   constructor(private _childProcessService: ChildProcessService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.correctTimerValueInit();
+  }
 
   @HostListener('window:keydown', ['$event'])
   keyEvent({ key, ctrlKey, altKey }: KeyboardEvent) {
@@ -39,7 +45,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
         this.minutes = this.minutes * 10 + keyNumber;
       }
 
-      if (this.minutes > 99) {
+      if (this.minutes > 99 || this.hours > 0) {
         const digitToTransferToHours = this.leftmostDigit(this.minutes);
         this.minutes -= digitToTransferToHours * 100;
         this.hours = this.hours * 10 + digitToTransferToHours;
@@ -50,18 +56,19 @@ export class MainViewComponent implements OnInit, OnDestroy {
         this.hours -= digitToRemoveFromHours * 100;
       }
     }
-    this.correctTimeIndicators();
+    this.correctTimerValues();
   }
 
   // returns true if shortcut existed, false if nothing happens
   runSpecialShortcut(key: string, isModified: boolean): boolean {
+    if (key.toLowerCase() === 'a') {
+      this.abort();
+      return true;
+    }
     if (this.disableControls) {
-      if (key.toLowerCase() === 'a') {
-        this.abort();
-        return true;
-      }
       return false;
     }
+
     switch (key.toLowerCase()) {
       case 'f1':
         // 2h preset
@@ -95,6 +102,30 @@ export class MainViewComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  correctTimerValueInit() {
+    this.correctTimerValues$ = new BehaviorSubject(null);
+    this.correctTimerValuesSubscription = this.correctTimerValues$
+      .pipe(
+        debounceTime(800),
+        tap(() => this.correctTimerValuesNow()),
+      )
+      .subscribe();
+  }
+
+  correctTimerValues() {
+    this.correctTimerValues$.next(null);
+  }
+
+  correctTimerValuesNow() {
+    // if (this.hours > this.MAX_HOURS) {
+    //   this.hours = this.MAX_HOURS;
+    //   this.minutes = 0;
+    // } else
+    if (this.minutes > this.MAX_MINUTES) {
+      this.minutes = this.MAX_MINUTES;
+    }
+  }
+
   leftmostDigit(number: number) {
     return Math.floor(number / 100);
   }
@@ -104,29 +135,20 @@ export class MainViewComponent implements OnInit, OnDestroy {
     this.hours = Math.floor(this.hours / 10);
   }
 
-  correctTimeIndicators() {
-    if (this.hours > 23) {
-      this.hours = 23;
-    }
-    if (this.minutes > 59) {
-      this.minutes = 59;
-    }
-  }
-
   incHours() {
-    this.hours = this.hours === 23 ? 0 : this.hours + 1;
+    this.hours = this.hours >= this.MAX_HOURS ? 0 : this.hours + 1;
   }
 
   decHours() {
-    this.hours = this.hours === 0 ? 23 : this.hours - 1;
+    this.hours = this.hours <= 0 ? this.MAX_HOURS : this.hours - 1;
   }
 
   incMinutes() {
-    this.minutes = this.minutes === 59 ? 0 : this.minutes + 1;
+    this.minutes = this.minutes >= this.MAX_MINUTES ? 0 : this.minutes + 1;
   }
 
   decMinutes() {
-    this.minutes = this.minutes === 0 ? 59 : this.minutes - 1;
+    this.minutes = this.minutes <= 0 ? this.MAX_MINUTES : this.minutes - 1;
   }
 
   startCountdown(timerInSeconds) {
@@ -141,10 +163,11 @@ export class MainViewComponent implements OnInit, OnDestroy {
   private allocateTimeUnits(timeDifference) {
     this.seconds = Math.floor(timeDifference % 60);
     this.minutes = Math.floor((timeDifference / 60) % 60);
-    this.hours = Math.floor((timeDifference / (60 * 60)) % 24);
+    this.hours = Math.floor(timeDifference / (60 * 60) /*% 24*/);
   }
 
   shutdownFromSelected() {
+    this.correctTimerValuesNow();
     this.shutdown(this.hours * 60 * 60 + this.minutes * 60);
   }
 
@@ -179,6 +202,11 @@ export class MainViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.countdownSubscription.unsubscribe();
+    if (this.countdownSubscription) {
+      this.countdownSubscription.unsubscribe();
+    }
+    if (this.correctTimerValuesSubscription) {
+      this.correctTimerValuesSubscription.unsubscribe();
+    }
   }
 }
