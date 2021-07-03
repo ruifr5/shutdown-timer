@@ -39,15 +39,15 @@ export class MainViewComponent implements OnInit, OnDestroy {
         this.minutes = this.minutes * 10 + keyNumber;
       }
 
-      if (this.minutes > 100) {
-        const numberToTransferToHours = this.leftmostDigit(this.minutes);
-        this.minutes -= numberToTransferToHours * 100;
-        this.hours = this.hours * 10 + numberToTransferToHours;
+      if (this.minutes > 99) {
+        const digitToTransferToHours = this.leftmostDigit(this.minutes);
+        this.minutes -= digitToTransferToHours * 100;
+        this.hours = this.hours * 10 + digitToTransferToHours;
       }
 
-      if (this.hours > 100) {
-        const numberToRemoveFromHours = this.leftmostDigit(this.hours);
-        this.hours -= numberToRemoveFromHours * 100;
+      if (this.hours > 99) {
+        const digitToRemoveFromHours = this.leftmostDigit(this.hours);
+        this.hours -= digitToRemoveFromHours * 100;
       }
     }
     this.correctTimeIndicators();
@@ -160,8 +160,10 @@ export class MainViewComponent implements OnInit, OnDestroy {
   }
 
   abort() {
+    if (this.countdownSubscription) {
+      this.countdownSubscription.unsubscribe();
+    }
     this.execCmd(['/a']);
-    this.countdownSubscription.unsubscribe();
     this.allocateTimeUnits(this.savedTimer); // reset to original timer
     this.savedTimer = 0;
     this.disableControls = false;
