@@ -1,6 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ChildProcessService } from 'ngx-childprocess';
-import { interval } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
+import { scan, take } from 'rxjs/operators';
 
 @Component({
   selector: 'st-main-view',
@@ -13,10 +14,8 @@ export class MainViewComponent implements OnInit, OnDestroy {
   seconds = 0;
   disableControls = false;
 
-  private countdownSubscription;
-  private timeDifference;
-  private dDay: number;
-  savedTimer = 0; // for reset purposes
+  private countdownSubscription: Subscription;
+  private savedTimer = 0;
 
   constructor(private _childProcessService: ChildProcessService) {}
 
@@ -130,18 +129,19 @@ export class MainViewComponent implements OnInit, OnDestroy {
     this.minutes = this.minutes === 0 ? 59 : this.minutes - 1;
   }
 
-  doCountdown() {
-    this.timeDifference = this.dDay - new Date().getTime();
-    this.allocateTimeUnits(this.timeDifference);
+  startCountdown(timerInSeconds) {
+    this.countdownSubscription = timer(0, 1000)
+      .pipe(
+        scan((secondsLeft) => --secondsLeft, timerInSeconds + 1),
+        take(timerInSeconds + 1),
+      )
+      .subscribe((secondsLeft) => this.allocateTimeUnits(secondsLeft));
   }
 
   private allocateTimeUnits(timeDifference) {
-    // (milliSecondsInASecond) % SecondsInAMinute);
-    this.seconds = Math.floor((timeDifference / 1000) % 60);
-    // (milliSecondsInASecond * minutesInAnHour) % SecondsInAMinute);
-    this.minutes = Math.floor((timeDifference / (1000 * 60)) % 60);
-    // (milliSecondsInASecond * minutesInAnHour * SecondsInAMinute) % hoursInADay);
-    this.hours = Math.floor((timeDifference / (1000 * 60 * 60)) % 24);
+    this.seconds = Math.floor(timeDifference % 60);
+    this.minutes = Math.floor((timeDifference / 60) % 60);
+    this.hours = Math.floor((timeDifference / (60 * 60)) % 24);
   }
 
   shutdownFromSelected() {
@@ -152,25 +152,18 @@ export class MainViewComponent implements OnInit, OnDestroy {
     if (!timerInSeconds) {
       return;
     }
-
-    this.savedTimer = timerInSeconds * 1000; // save in milliseconds
-    this.allocateTimeUnits(this.savedTimer);
+    this.savedTimer = timerInSeconds;
     this.disableControls = true;
 
-    this.dDay = new Date().getTime() + timerInSeconds * 1000;
-    this.countdownSubscription = interval(500).subscribe(() =>
-      this.doCountdown(),
-    );
-
+    this.startCountdown(timerInSeconds);
     this.execCmd(['/s', '/t', timerInSeconds]);
   }
 
   abort() {
     this.execCmd(['/a']);
     this.countdownSubscription.unsubscribe();
-    this.allocateTimeUnits(this.savedTimer); // reset timer
+    this.allocateTimeUnits(this.savedTimer); // reset to original timer
     this.savedTimer = 0;
-    this.dDay = undefined;
     this.disableControls = false;
   }
 
