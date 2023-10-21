@@ -14,7 +14,8 @@
     "e": "ng build && electron .",
     "p": "ng build --prod && electron-packager . --no-prune --ignore=/node_modules --ignore=/e2e --ignore=/src --overwrite",
     "p:mac": "ng build --prod && electron-packager . --no-prune --ignore=/node_modules --ignore=/e2e --ignore=/src --overwrite --platform=darwin",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "env_fix": "$env:NODE_OPTIONS=\"--openssl-legacy-provider\""
   },
   "private": true,
   "dependencies": {},
