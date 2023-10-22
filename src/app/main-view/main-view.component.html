@@ -20,7 +20,7 @@
         {{ seconds | number : '2.0-0' }}
       </div>
     </div>
-    <div class="radio-buttons-container">
+    <div *ngIf="!disableControls" class="radio-buttons-container">
       <div class="radio-button">
         <input
           type="radio"
