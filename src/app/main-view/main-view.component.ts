@@ -24,8 +24,14 @@ export class MainViewComponent implements OnInit, OnDestroy {
   private correctTimerValuesSubscription: Subscription;
   private countdownSubscription: Subscription;
   private savedTimer = 0;
-  private readonly MAX_MINUTES = 59;
-  private readonly MAX_HOURS = 99;
+
+  private getMaxMinutes() {
+    return 59;
+  }
+
+  private getMaxHours() {
+    return this.clockType === ClockType.at ? 23 : 99;
+  }
 
   constructor(private _childProcessService: ChildProcessService) {}
 
@@ -118,6 +124,10 @@ export class MainViewComponent implements OnInit, OnDestroy {
     this.shutdown(60 * 60 * 3);
   }
 
+  onClockTypeChange() {
+    this.correctTimerValuesNow();
+  }
+
   correctTimerValueInit() {
     this.correctTimerValues$ = new BehaviorSubject(null);
     this.correctTimerValuesSubscription = this.correctTimerValues$
@@ -133,8 +143,11 @@ export class MainViewComponent implements OnInit, OnDestroy {
   }
 
   correctTimerValuesNow() {
-    if (this.minutes > this.MAX_MINUTES) {
-      this.minutes = this.MAX_MINUTES;
+    if (this.hours > this.getMaxHours()) {
+      this.hours = this.getMaxHours();
+    }
+    if (this.minutes > this.getMaxMinutes()) {
+      this.minutes = this.getMaxMinutes();
     }
   }
 
@@ -148,19 +161,19 @@ export class MainViewComponent implements OnInit, OnDestroy {
   }
 
   incHours() {
-    this.hours = this.hours >= this.MAX_HOURS ? 0 : this.hours + 1;
+    this.hours = this.hours >= this.getMaxHours() ? 0 : this.hours + 1;
   }
 
   decHours() {
-    this.hours = this.hours <= 0 ? this.MAX_HOURS : this.hours - 1;
+    this.hours = this.hours <= 0 ? this.getMaxHours() : this.hours - 1;
   }
 
   incMinutes() {
-    this.minutes = this.minutes >= this.MAX_MINUTES ? 0 : this.minutes + 1;
+    this.minutes = this.minutes >= this.getMaxMinutes() ? 0 : this.minutes + 1;
   }
 
   decMinutes() {
-    this.minutes = this.minutes <= 0 ? this.MAX_MINUTES : this.minutes - 1;
+    this.minutes = this.minutes <= 0 ? this.getMaxMinutes() : this.minutes - 1;
   }
 
   startCountdown(timerInSeconds) {
