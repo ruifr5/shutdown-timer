@@ -3,6 +3,11 @@ import { ChildProcessService } from 'ngx-childprocess';
 import { Subscription, timer, BehaviorSubject } from 'rxjs';
 import { debounceTime, scan, take, tap } from 'rxjs/operators';
 
+enum ClockType {
+  in = 'in',
+  at = 'at',
+}
+
 @Component({
   selector: 'st-main-view',
   templateUrl: './main-view.component.html',
@@ -13,6 +18,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
   minutes = 0;
   seconds = 0;
   disableControls = false;
+  clockType: ClockType = ClockType.in;
 
   private correctTimerValues$: BehaviorSubject<any>;
   private correctTimerValuesSubscription: Subscription;
@@ -102,6 +108,16 @@ export class MainViewComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  onPreset1Click() {
+    this.clockType = ClockType.in;
+    this.shutdown(60 * 60 * 2);
+  }
+
+  onPreset2Click() {
+    this.clockType = ClockType.in;
+    this.shutdown(60 * 60 * 3);
+  }
+
   correctTimerValueInit() {
     this.correctTimerValues$ = new BehaviorSubject(null);
     this.correctTimerValuesSubscription = this.correctTimerValues$
@@ -117,10 +133,6 @@ export class MainViewComponent implements OnInit, OnDestroy {
   }
 
   correctTimerValuesNow() {
-    // if (this.hours > this.MAX_HOURS) {
-    //   this.hours = this.MAX_HOURS;
-    //   this.minutes = 0;
-    // } else
     if (this.minutes > this.MAX_MINUTES) {
       this.minutes = this.MAX_MINUTES;
     }
@@ -160,22 +172,44 @@ export class MainViewComponent implements OnInit, OnDestroy {
       .subscribe((secondsLeft) => this.allocateTimeUnits(secondsLeft));
   }
 
-  private allocateTimeUnits(timeDifference) {
-    this.seconds = Math.floor(timeDifference % 60);
-    this.minutes = Math.floor((timeDifference / 60) % 60);
-    this.hours = Math.floor(timeDifference / (60 * 60) /*% 24*/);
+  private allocateTimeUnits(timeDifferenceInSeconds) {
+    this.seconds = Math.floor(timeDifferenceInSeconds % 60);
+    this.minutes = Math.floor((timeDifferenceInSeconds / 60) % 60);
+    this.hours = Math.floor(timeDifferenceInSeconds / (60 * 60) /*% 24*/);
+  }
+
+  getSelectedTimeInSeconds() {
+    return this.hours * 60 * 60 + this.minutes * 60;
+  }
+
+  calcSecondsTillShutdown() {
+    switch (this.clockType) {
+      case ClockType.in:
+        return this.getSelectedTimeInSeconds();
+      case ClockType.at:
+        const currDate = new Date();
+        const currTimeInSeconds =
+          currDate.getHours() * 60 * 60 +
+          currDate.getMinutes() * 60 +
+          currDate.getSeconds();
+        const targetTimeInSeconds = this.getSelectedTimeInSeconds();
+        let result = targetTimeInSeconds - currTimeInSeconds;
+        if (result < 0) result += 24 * 60 * 60;
+        return result;
+    }
   }
 
   shutdownFromSelected() {
     this.correctTimerValuesNow();
-    this.shutdown(this.hours * 60 * 60 + this.minutes * 60);
+    const secondsTillShutdown = this.calcSecondsTillShutdown();
+    this.shutdown(secondsTillShutdown);
   }
 
   shutdown(timerInSeconds: number) {
     if (!timerInSeconds) {
       return;
     }
-    this.savedTimer = timerInSeconds;
+    this.savedTimer = this.getSelectedTimeInSeconds();
     this.disableControls = true;
 
     this.startCountdown(timerInSeconds);

@@ -172,3 +172,18 @@ button {
   right: 3px;
   bottom: 15px;
 }
+
+.radio-buttons-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.radio-button {
+  display: flex;
+  justify-items: center;
+  color: white;
+  margin: 3px;
+  font-size: x-large;
+}

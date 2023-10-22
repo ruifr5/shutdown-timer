@@ -7,17 +7,37 @@
     <div class="preset-btn-group" [ngClass]="{ disabled: disableControls }">
       <ng-container *ngIf="!disableControls">
         <div class="preset-title">PreSets</div>
-        <button class="preset-botao" (click)="shutdown(60 * 60 * 2)">2H</button>
-        <button class="preset-botao" (click)="shutdown(60 * 60 * 3)">3H</button>
+        <button class="preset-botao" (click)="onPreset1Click()">2H</button>
+        <button class="preset-botao" (click)="onPreset1Click()">3H</button>
       </ng-container>
     </div>
     <div class="preta">
       <span class="horas horas-cinzento"> 00:00 </span>
       <span class="horas horas-vermelho">
-        {{ hours | number: '2.0-0' }}:{{ minutes | number: '2.0-0' }}
+        {{ hours | number : '2.0-0' }}:{{ minutes | number : '2.0-0' }}
       </span>
       <div class="segundos">
-        {{ seconds | number: '2.0-0' }}
+        {{ seconds | number : '2.0-0' }}
+      </div>
+    </div>
+    <div class="radio-buttons-container">
+      <div class="radio-button">
+        <input
+          type="radio"
+          name="clockType"
+          value="in"
+          [(ngModel)]="clockType"
+        />
+        <span>in</span>
+      </div>
+      <div class="radio-button">
+        <input
+          type="radio"
+          name="clockType"
+          value="at"
+          [(ngModel)]="clockType"
+        />
+        <span>at</span>
       </div>
     </div>
   </div>
