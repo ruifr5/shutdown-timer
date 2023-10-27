@@ -4,8 +4,8 @@ import { Subscription, timer, BehaviorSubject } from 'rxjs';
 import { debounceTime, scan, take, tap } from 'rxjs/operators';
 
 enum ClockType {
-  in = 'in',
-  at = 'at',
+  IN = 'IN',
+  AT = 'AT',
 }
 
 @Component({
@@ -18,7 +18,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
   minutes = 0;
   seconds = 0;
   disableControls = false;
-  clockType: ClockType = ClockType.in;
+  clockType: ClockType = ClockType.IN;
 
   private correctTimerValues$: BehaviorSubject<any>;
   private correctTimerValuesSubscription: Subscription;
@@ -30,7 +30,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
   }
 
   private getMaxHours() {
-    return this.clockType === ClockType.at ? 23 : 99;
+    return this.clockType === ClockType.AT ? 23 : 99;
   }
 
   constructor(private _childProcessService: ChildProcessService) {}
@@ -73,7 +73,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
 
   // returns true if shortcut existed, false if nothing happens
   runSpecialShortcut(key: string, isModified: boolean): boolean {
-    if (key.toLowerCase() === 'a') {
+    if (['a', 'escape'].includes(key.toLowerCase())) {
       this.abort();
       return true;
     }
@@ -83,19 +83,14 @@ export class MainViewComponent implements OnInit, OnDestroy {
 
     switch (key.toLowerCase()) {
       case 'f1':
-        // 2h preset
-        this.shutdown(60 * 60 * 2);
+        this.onPreset1Click();
         return true;
       case 'f2':
-        // 3h preset
-        this.shutdown(60 * 60 * 3);
+        this.onPreset2Click();
         return true;
       case 'delete':
       case 'c':
         this.minutes = this.hours = this.seconds = 0;
-        return true;
-      case 'escape':
-        this.close();
         return true;
       case 'enter':
       case 's':
@@ -115,12 +110,12 @@ export class MainViewComponent implements OnInit, OnDestroy {
   }
 
   onPreset1Click() {
-    this.clockType = ClockType.in;
+    this.clockType = ClockType.IN;
     this.shutdown(60 * 60 * 2);
   }
 
   onPreset2Click() {
-    this.clockType = ClockType.in;
+    this.clockType = ClockType.IN;
     this.shutdown(60 * 60 * 3);
   }
 
@@ -176,15 +171,6 @@ export class MainViewComponent implements OnInit, OnDestroy {
     this.minutes = this.minutes <= 0 ? this.getMaxMinutes() : this.minutes - 1;
   }
 
-  startCountdown(timerInSeconds) {
-    this.countdownSubscription = timer(0, 1000)
-      .pipe(
-        scan((secondsLeft) => --secondsLeft, timerInSeconds + 1),
-        take(timerInSeconds + 1),
-      )
-      .subscribe((secondsLeft) => this.allocateTimeUnits(secondsLeft));
-  }
-
   private allocateTimeUnits(timeDifferenceInSeconds) {
     this.seconds = Math.floor(timeDifferenceInSeconds % 60);
     this.minutes = Math.floor((timeDifferenceInSeconds / 60) % 60);
@@ -197,9 +183,9 @@ export class MainViewComponent implements OnInit, OnDestroy {
 
   calcSecondsTillShutdown() {
     switch (this.clockType) {
-      case ClockType.in:
+      case ClockType.IN:
         return this.getSelectedTimeInSeconds();
-      case ClockType.at:
+      case ClockType.AT:
         const currDate = new Date();
         const currTimeInSeconds =
           currDate.getHours() * 60 * 60 +
@@ -222,7 +208,10 @@ export class MainViewComponent implements OnInit, OnDestroy {
     if (!timerInSeconds) {
       return;
     }
-    this.savedTimer = this.getSelectedTimeInSeconds();
+    this.savedTimer =
+      this.clockType === ClockType.IN
+        ? timerInSeconds
+        : this.getSelectedTimeInSeconds();
     this.disableControls = true;
 
     this.startCountdown(timerInSeconds);
@@ -237,6 +226,15 @@ export class MainViewComponent implements OnInit, OnDestroy {
     this.allocateTimeUnits(this.savedTimer); // reset to original timer
     this.savedTimer = 0;
     this.disableControls = false;
+  }
+
+  startCountdown(timerInSeconds) {
+    this.countdownSubscription = timer(0, 1000)
+      .pipe(
+        scan((secondsLeft) => --secondsLeft, timerInSeconds + 1),
+        take(timerInSeconds + 1),
+      )
+      .subscribe((secondsLeft) => this.allocateTimeUnits(secondsLeft));
   }
 
   execCmd(cmd: any[]) {

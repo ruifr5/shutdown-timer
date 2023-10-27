@@ -8,7 +8,7 @@
       <ng-container *ngIf="!disableControls">
         <div class="preset-title">PreSets</div>
         <button class="preset-botao" (click)="onPreset1Click()">2H</button>
-        <button class="preset-botao" (click)="onPreset1Click()">3H</button>
+        <button class="preset-botao" (click)="onPreset2Click()">3H</button>
       </ng-container>
     </div>
     <div class="preta">
@@ -25,7 +25,7 @@
         <input
           type="radio"
           name="clockType"
-          value="in"
+          value="IN"
           [(ngModel)]="clockType"
         />
         <span>in</span>
@@ -34,7 +34,7 @@
         <input
           type="radio"
           name="clockType"
-          value="at"
+          value="AT"
           [(ngModel)]="clockType"
           (change)="onClockTypeChange()"
         />
